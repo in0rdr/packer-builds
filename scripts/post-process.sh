@@ -20,14 +20,14 @@ csrftoken=$(echo "$ticket" | jq -r '.data.CSRFPreventionToken' | sed 's/^/CSRFPr
 # add cloud-init drive
 curl -s -H "$csrftoken" -XPOST -b "$cookie" \
  "$PM_API_URL/nodes/$PM_NODE/qemu/$vmid/config" \
- --data-urlencode scsi1="local-lvm:cloudinit"
+ --data-urlencode cdrom="local-lvm:cloudinit"
 
-curl -s -XGET -b "$cookie" \
- "$PM_API_URL/nodes/$PM_NODE/qemu/$vmid/config" | jq '.data.scsi1'
-
+#
+# show cloud-init drive
+#curl -s -XGET -b "$cookie" \
+# "$PM_API_URL/nodes/$PM_NODE/qemu/$vmid/config" | jq '.data.cdrom'
+#
 # delete cloud-init drive
 #curl -s -H "$csrftoken" -XPOST -b "$cookie" \
 # "$PM_API_URL/nodes/$PM_NODE/qemu/$vmid/config" \
-# --data-urlencode delete="scsi1"
-#curl -s -XGET -b "$cookie" \
-# "$PM_API_URL/nodes/$PM_NODE/qemu/$vmid/config" | jq '.data.scsi1'
+# --data-urlencode delete="cdrom"
