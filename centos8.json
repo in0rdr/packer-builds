@@ -49,6 +49,12 @@
       "template_description": "CentOS 8, generated on {{ isotime }}"
     }
   ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/cloud-config.sh"
+    }
+  ],
   "post-processors": [
     {
       "type": "manifest",

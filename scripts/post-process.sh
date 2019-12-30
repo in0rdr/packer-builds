@@ -7,7 +7,7 @@ set -o nounset
 # https://pve.proxmox.com/wiki/Proxmox_VE_API
 # https://pve.proxmox.com/wiki/Cloud-Init_Support#_preparing_cloud_init_templates
 
-#yum install -y epel-release jq curl
+yum install -y epel-release jq curl
 
 # read vm id from latest build
 vmid=$(jq -r '.builds | sort_by(.build_time) | reverse | .[0].artifact_id' "$PACKER_MANIFEST")
