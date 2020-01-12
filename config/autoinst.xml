@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!DOCTYPE profile>
+
+<profile xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+  <general>
+    <mode>
+      <confirm config:type="boolean">false</confirm>
+    </mode>
+  </general>
+
+  <bootloader>
+    <global>
+      <!--<append> resume=/dev/vda1 splash=silent quiet showopts</append>-->
+      <append> ipv6.disable=1</append>
+      <append_failsafe>showopts apm=off noresume edd=off powersaved=off nohz=off highres=off processor.max_cstate=1 nomodeset x11failsafe</append_failsafe>
+      <default>openSUSE Leap 15.0</default>
+      <distributor>openSUSE Leap 15.0</distributor>
+      <gfxbackground>/boot/grub2/themes/openSUSE/background.png</gfxbackground>
+      <gfxmode>auto</gfxmode>
+      <gfxtheme>/boot/grub2/themes/openSUSE/theme.txt</gfxtheme>
+      <hiddenmenu>false</hiddenmenu>
+      <lines_cache_id>0</lines_cache_id>
+      <os_prober>true</os_prober>
+      <terminal>gfxterm</terminal>
+      <timeout config:type="integer">5</timeout>
+    </global>
+
+    <loader_type>grub2</loader_type>
+  </bootloader>
+
+  <firewall>
+    <enable_firewall config:type="boolean">false</enable_firewall>
+    <start_firewall config:type="boolean">false</start_firewall>
+  </firewall>
+
+  <!--<keyboard>
+    <keymap>english-us</keymap>
+  </keyboard>-->
+
+  <language>
+    <language>en_US</language>
+  </language>
+
+  <networking>
+    <dhcp_options>
+      <dhclient_client_id/>
+      <dhclient_hostname_option>AUTO</dhclient_hostname_option>
+    </dhcp_options>
+
+    <dns>
+      <hostname>vagrant-openSUSE-Leap</hostname>
+      <domain>vagrantup.com</domain>
+
+      <resolv_conf_policy>auto</resolv_conf_policy>
+
+      <dhcp_hostname config:type="boolean">false</dhcp_hostname>
+      <write_hostname config:type="boolean">false</write_hostname>
+    </dns>
+
+    <interfaces config:type="list">
+      <interface>
+        <bootproto>dhcp</bootproto>
+        <device>eth0</device>
+        <startmode>auto</startmode>
+        <usercontrol>no</usercontrol>
+      </interface>
+    </interfaces>
+    <ipv6 config:type="boolean">false</ipv6>
+  </networking>
+
+  <partitioning config:type="list">
+    <drive>
+      <use>all</use>
+    </drive>
+  </partitioning>
+
+  <report>
+    <errors>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">false</show>
+      <timeout config:type="integer">10</timeout>
+    </errors>
+    <messages>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">false</show>
+      <timeout config:type="integer">10</timeout>
+    </messages>
+    <warnings>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">false</show>
+      <timeout config:type="integer">10</timeout>
+    </warnings>
+    <yesno_messages>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">false</show>
+      <timeout config:type="integer">10</timeout>
+    </yesno_messages>
+  </report>
+
+  <software>
+    <install_recommended config:type="boolean">false</install_recommended>
+    <patterns config:type="list">
+      <pattern>base</pattern>
+      <pattern>sw_management</pattern>
+      <pattern>yast2_basis</pattern>
+    </patterns>
+    <products config:type="list">
+      <product>openSUSE</product>
+    </products>
+    <packages config:type="list">
+      <package>cloud-init</package>
+      <package>qemu-guest-agent</package>
+      <package>NetworkManager</package>
+    </packages>
+  </software>
+
+  <timezone>
+    <hwclock>UTC</hwclock>
+    <timezone>Europe/Zurich</timezone>
+  </timezone>
+
+  <services-manager>
+    <default_target>multi-user</default_target>
+
+    <services>
+      <disable config:type="list">
+        <service>wickedd-dhcp6</service>
+        <service>wickedd-auto6</service>
+        <service>wicked</service>
+        <service>wickedd-auto4</service>
+        <service>wickedd-dhcp4</service>
+        <service>wickedd-nanny</service>
+      </disable>
+      <enable config:type="list">
+        <service>qemu-ga@vport2p1</service>
+        <!--<service>qemu-ga@virtio-ports/org.qemu.guest_agent.0</service>-->
+        <service>NetworkManager</service>
+        <service>getty@tty1</service>
+        <service>sshd</service>
+      </enable>
+    </services>
+  </services-manager>
+
+  <scripts>
+    <chroot-scripts config:type="list">
+      <script>
+        <filename>newrename.sh</filename>
+        <interpreter>shell</interpreter>
+
+        <source>ln -sf /dev/null /etc/udev/rules.d/80-net-setup-link.rules</source>
+
+        <feedback config:type="boolean">false</feedback>
+        <debug config:type="boolean">true</debug>
+        <chrooted config:type="boolean">true</chrooted>
+      </script>
+
+      <script>
+        <filename>oldrename.sh</filename>
+        <interpreter>shell</interpreter>
+
+        <source>ln -sf /dev/null /etc/udev/rules.d/80-net-name-slot.rules</source>
+
+        <feedback config:type="boolean">false</feedback>
+        <debug config:type="boolean">true</debug>
+        <chrooted config:type="boolean">true</chrooted>
+      </script>
+    </chroot-scripts>
+  </scripts>
+
+  <users config:type="list">
+    <user>
+      <username>root</username>
+      <user_password>root</user_password>
+    </user>
+  </users>
+</profile>
+

@@ -1,0 +1,69 @@
+{
+  "variables": {
+    "username": "{{env `PM_USER`}}",
+    "password": "{{env `PM_PASS`}}",
+    "api_url": "{{env `PM_API_URL`}}",
+    "pve_node": "{{env `PM_NODE`}}",
+    "pve_pool": "{{env `PM_POOL`}}",
+    "manifest": "manifest.json"
+  },
+  "sensitive-variables": ["password"],
+  "builders": [
+    {
+      "type": "proxmox",
+      "proxmox_url": "{{user `api_url`}}",
+      "username": "{{user `username`}}",
+      "password": "{{user `password`}}",
+      "node": "{{user `pve_node`}}",
+      "pool": "{{user `pve_pool`}}",
+      "network_adapters": [
+        {
+          "bridge": "vmbr0",
+          "model": "virtio"
+        }
+      ],
+      "disks": [
+        {
+          "disk_size": "5G",
+          "storage_pool": "local-lvm",
+          "storage_pool_type": "lvm"
+        }
+      ],
+      "memory": "1024",
+      "cpu_type": "host",
+      "scsi_controller": "virtio-scsi-pci",
+
+      "iso_file": "shared:iso/openSUSE-Leap-15.1-DVD-x86_64.iso",
+      "os": "l26",
+      "http_directory":"config",
+      "boot_wait": "10s",
+      "boot_command": [
+        "<esc><enter><wait>",
+        "linux ",
+        "ipv6.disable=1 ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "netdevice=eth0 ",
+        "netsetup=dhcp ",
+        "textmode=1 ",
+        "autoyast=http://{{.HTTPIP}}:{{.HTTPPort}}/autoinst.xml",
+        "<enter>"
+      ],
+      "ssh_username": "root",
+      "ssh_timeout": "15m",
+      "pause_before_connecting": "2m",
+      "ssh_password": "root",
+
+      "unmount_iso": true,
+      "template_name": "opensuse15-1-{{ isotime \"20060102-150405\" }}",
+      "template_description": "openSUSE 15.1, generated on {{ isotime }}"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `manifest`}}",
+      "strip_path": true
+    }
+  ]
+}
