@@ -1,0 +1,44 @@
+{
+  "variables": {
+    "manifest": "manifest.json"
+  },
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "http://linuxsoft.cern.ch/centos/8.1.1911/isos/x86_64/CentOS-8.1.1911-x86_64-boot.iso",
+      "iso_checksum_url": "http://linuxsoft.cern.ch/centos/8.1.1911/isos/x86_64/CHECKSUM",
+      "iso_checksum_type": "file",
+      "output_directory": "centos8-{{ isotime \"20060102-150405\" }}",
+      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now",
+      "disk_size": "14000",
+      "memory": "1024",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "http_directory": "config",
+      "ssh_username": "root",
+      "ssh_password": "root",
+      "ssh_timeout": "20m",
+      "vm_name": "centos8-{{ isotime \"20060102-150405\" }}",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "10s",
+      "boot_command": [
+        "<up><tab> rd.shell ip=dhcp inst.cmdline inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/ks.cfg<enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/cloud-config.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `manifest`}}",
+      "strip_path": true
+    }
+  ]
+}
