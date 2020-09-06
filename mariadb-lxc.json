@@ -1,0 +1,43 @@
+{
+  "variables": {
+    "manifest": "manifest.json",
+    "mysql_root_password": "",
+    "mysql_additional_users": "\"user1\", \"user2\", \"user3\"",
+    "mysql_additional_passwords": "\"password1\", \"password2\", \"password3\"",
+    "mysql_additional_hosts": "\"127.0.0.1\", \"localhost\"",
+    "mysql_lxc_container_name": "mariadb"
+  },
+  "sensitive-variables": [
+    "mysql_root_password",
+    "mysql_additional_passwords"
+  ],
+  "builders": [
+    {
+      "type": "lxc",
+      "config_file": "config/mariadb-config",
+      "template_name": "download",
+      "template_parameters": ["--dist", "Debian", "--release", "Buster", "--arch", "armv7l"],
+      "container_name": "{{ user `mysql_lxc_container_name` }}",
+      "output_directory": "output-{{ user `mysql_lxc_container_name` }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/mariadb.sh",
+      "environment_vars": [
+        "MYSQL_ROOT_PASSWORD={{ user `mysql_root_password` }}",
+        "MYSQL_ADDITIONAL_USERS={{ user `mysql_additional_users` }}",
+        "MYSQL_ADDITIONAL_PASSWORDS={{ user `mysql_additional_passwords` }}",
+        "MYSQL_ADDITIONAL_HOSTS={{ user `mysql_additional_hosts` }}"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "{{user `manifest`}}",
+      "strip_path": true
+    }
+  ]
+}
