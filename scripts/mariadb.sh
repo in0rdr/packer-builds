@@ -5,7 +5,7 @@ set -o nounset
 set -o xtrace
 
 # install mariadb server and tools
-apt install -y mariadb-server mariadb-backup
+apt-get install -y mariadb-server mariadb-backup
 
 # MySql cecure install
 
@@ -29,9 +29,15 @@ password = $MYSQL_ROOT_PASSWORD
 EOF
 
 # add additional users
-for u in $MYSQL_ADDITIONAL_USERS; do
-  echo $u;
+users=($MYSQL_ADDITIONAL_USERS)
+hosts=($MYSQL_ADDITIONAL_HOSTS)
+passwords=($MYSQL_ADDITIONAL_PASSWORDS)
+no_users="${#users[@]}"
+for ((i = 0 ; i < $no_users ; i++)); do
+  mysql -e "CREATE USER '${users[$i]}'@'${hosts[$i]}' IDENTIFIED BY '${passwords[$i]}';"
 done;
-for u in $MYSQL_ADDITIONAL_USERS; do
-  echo $u;
-done;
+
+# bind
+#IP_ETH0=$(ip route | grep eth0 | grep src | awk '{print $9}')
+#HOSTNAME=LXCNAME works as well, but refers to the container that was built last (nslookup LXCNAME)
+sed -i "s/\(bind.*\) 127.0.0.1/\1 $MYSQL_BIND/g" /etc/mysql/mariadb.conf.d/50-server.cnf

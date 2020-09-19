@@ -1,11 +1,11 @@
 {
   "variables": {
     "manifest": "manifest.json",
+    "mysql_bind": "127.0.0.1",
     "mysql_root_password": "",
-    "mysql_additional_users": "\"user1\", \"user2\", \"user3\"",
-    "mysql_additional_passwords": "\"password1\", \"password2\", \"password3\"",
-    "mysql_additional_hosts": "\"127.0.0.1\", \"localhost\"",
-    "mysql_lxc_container_name": "mariadb"
+    "mysql_additional_users": "\"user1\" \"user2\" \"user3\"",
+    "mysql_additional_passwords": "\"password1\" \"password2\" \"password3\"",
+    "mysql_additional_hosts": "\"127.0.0.1\" \"localhost\" \"localhost\""
   },
   "sensitive-variables": [
     "mysql_root_password",
@@ -14,30 +14,31 @@
   "builders": [
     {
       "type": "lxc",
-      "config_file": "config/mariadb-config",
+      "name": "mariadb",
+      "config_file": "config/lxc-config",
       "template_name": "download",
-      "template_parameters": ["--dist", "Debian", "--release", "Buster", "--arch", "armv7l"],
-      "container_name": "{{ user `mysql_lxc_container_name` }}",
-      "output_directory": "output-{{ user `mysql_lxc_container_name` }}"
+      "template_parameters": ["--dist", "Debian", "--release", "Buster", "--arch", "armv7l", "--no-validate"]
     }
   ],
   "provisioners": [
     {
       "type": "shell",
+      "script": "scripts/timezone.sh"
+    },
+    {
+      "type": "shell",
       "script": "scripts/mariadb.sh",
       "environment_vars": [
+        "MYSQL_BIND={{ user `mysql_bind` }}",
         "MYSQL_ROOT_PASSWORD={{ user `mysql_root_password` }}",
         "MYSQL_ADDITIONAL_USERS={{ user `mysql_additional_users` }}",
         "MYSQL_ADDITIONAL_PASSWORDS={{ user `mysql_additional_passwords` }}",
         "MYSQL_ADDITIONAL_HOSTS={{ user `mysql_additional_hosts` }}"
       ]
-    }
-  ],
-  "post-processors": [
+    },
     {
-      "type": "manifest",
-      "output": "{{user `manifest`}}",
-      "strip_path": true
+      "type": "shell",
+      "inline": ["mysql -e \"GRANT ALL PRIVILEGES on db1.* to 'user1'@'localhost';\""]
     }
   ]
 }
