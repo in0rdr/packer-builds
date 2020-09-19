@@ -1,0 +1,17 @@
+# Distribution configuration
+lxc.arch = armv7l
+
+# Container specific configuration
+lxc.include = /usr/share/lxc/config/common.conf
+lxc.hook.start-host = /usr/share/lxc/hooks/systemd-workaround
+
+# Network configuration
+lxc.net.0.type = veth
+lxc.net.0.link = br-lan
+lxc.net.0.flags = up
+lxc.net.0.name = eth0
+
+# Nextcloud data dir
+# * https://wiki.debian.org/LXC#External_mounts_inside_the_container
+# * https://linuxcontainers.org/lxc/manpages/man5/lxc.container.conf.5.html
+lxc.mount.entry=/srv/www/nextcloud/data var/www/nextcloud/data none bind,create=dir 0 0

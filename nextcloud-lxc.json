@@ -1,0 +1,56 @@
+{
+  "variables": {
+    "manifest": "manifest.json",
+    "nextcloud_database": "mysql",
+    "nextcloud_database_name": "nextcloud",
+    "nextcloud_database_host": "mariadb.lan",
+    "nextcloud_database_port": "3306",
+    "nextcloud_database_user": "nextcloud",
+    "nextcloud_database_pass": "nextcloud",
+    "nextcloud_admin_user": "admin",
+    "nextcloud_admin_password": "admin",
+    "nextcloud_additional_users": "\"user1\" \"user2\" \"user3\"",
+    "nextcloud_additional_passwords": "\"p4zzw0rd1\" \"p4zzw0rd2\" \"p4zzw0rd3\"",
+    "nextcloud_datadir": "/var/www/nextcloud/data",
+    "nextcloud_urls": "\"nextcloud.com\" \"nextcloud.lan\"",
+    "nextcloud_cli_url": "nextcloud.com",
+    "nextcloud_rewrite_base": "/",
+    "certbot_mail": "root@dev.dev"
+  },
+  "builders": [
+    {
+      "type": "lxc",
+      "name": "nextcloud",
+      "config_file": "config/nextcloud-config",
+      "template_name": "download",
+      "template_parameters": ["--dist", "Debian", "--release", "Buster", "--arch", "armv7l"]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/timezone.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/nextcloud.sh",
+      "environment_vars": [
+        "NEXTCLOUD_DATABASE={{ user `nextcloud_database` }}",
+        "NEXTCLOUD_DATABASE_NAME={{ user `nextcloud_database_name` }}",
+        "NEXTCLOUD_DATABASE_HOST={{ user `nextcloud_database_host` }}",
+        "NEXTCLOUD_DATABASE_PORT={{ user `nextcloud_database_port` }}",
+        "NEXTCLOUD_DATABASE_USER={{ user `nextcloud_database_user` }}",
+        "NEXTCLOUD_DATABASE_PASS={{ user `nextcloud_database_pass` }}",
+        "NEXTCLOUD_ADMIN_USER={{ user `nextcloud_admin_user` }}",
+        "NEXTCLOUD_ADMIN_PASSWORD={{ user `nextcloud_admin_password` }}",
+        "NEXTCLOUD_ADDITIONAL_USERS={{ user `nextcloud_additional_users` }}",
+        "NEXTCLOUD_ADDITIONAL_PASSWORDS={{ user `nextcloud_additional_passwords` }}",
+        "NEXTCLOUD_DATADIR={{ user `nextcloud_datadir` }}",
+        "NEXTCLOUD_URLS={{ user `nextcloud_urls` }}",
+        "NEXTCLOUD_CLI_URL={{ user `nextcloud_cli_url` }}",
+        "NEXTCLOUD_REWRITE_BASE={{ user `nextcloud_rewrite_base` }}",
+        "CERTBOT_MAIL={{ user `certbot_mail` }}"
+      ]
+    }
+  ]
+}
