@@ -1,0 +1,26 @@
+{
+  "variables": {
+    "manifest": "manifest.json"
+  },
+  "builders": [
+    {
+      "type": "lxc",
+      "name": "haproxy",
+      "config_file": "config/lxc-config",
+      "template_name": "download",
+      "template_parameters": ["--dist", "Debian", "--release", "Buster", "--arch", "armv7l"]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/timezone.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/haproxy.sh",
+      "environment_vars": [
+      ]
+    }
+  ]
+}
