@@ -49,6 +49,7 @@ PACKER_LOG=1 packer build \
  -var 'nextcloud_admin_pass=abc' \
  -var 'nextcloud_database_pass=456' \
  -var 'certbot_mail=root@dev.mail' \
+ -var 'overwrite_cli_url=nextcloud.com' \
  nextcloud-lxc.json
 
 ./deploy-output.sh output-packer-nextcloud nextcloud

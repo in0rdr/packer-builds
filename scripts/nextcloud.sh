@@ -44,9 +44,9 @@ sed -i 's/;opcache.enable=1/opcache.enable=1/g' /etc/php/7.3/apache2/php.ini
 
 # enable apcu cli
 # https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/caching_configuration.html
-cat << EOF > /etc/php/7.3/mods-available/nextcloud-cli.ini                                                                                             
-apc.enable_cli=1                                                                                                                                                       
-EOF                                                                                                                                                                    
+cat << EOF > /etc/php/7.3/mods-available/nextcloud-cli.ini
+apc.enable_cli=1
+EOF
 ln -s /etc/php/7.3/mods-available/nextcloud-cli.ini /etc/php/7.3/cli/conf.d/99-nexcloud.ini
 
 # enable config
@@ -60,13 +60,13 @@ a2enmod dir
 a2enmod mime
 a2enmod ssl
 
-OCC=/var/www/nextcloud/occ
-APACHE_USER=www-data
-APACHE_GROUP=www-data
+OCC="/var/www/nextcloud/occ"
+APACHE_USER="www-data"
+APACHE_GROUP="www-data"
 
 # status
 which php
-sudo -u www-data php $OCC status
+sudo -u "$APACHE_USER" -g "$APACHE_GROUP" php "$OCC" status
 
 # install nextcloud
 sudo -u "$APACHE_USER" -g "$APACHE_GROUP" php "$OCC" maintenance:install \
@@ -75,7 +75,7 @@ sudo -u "$APACHE_USER" -g "$APACHE_GROUP" php "$OCC" maintenance:install \
  --admin-user "$NEXTCLOUD_ADMIN_USER" --admin-pass "$NEXTCLOUD_ADMIN_PASSWORD" \
  --data-dir "$NEXTCLOUD_DATADIR" || exit 0
 
-sudo -u www-data php $OCC status
+sudo -u "$APACHE_USER" -g "$APACHE_GROUP" php "$OCC" status
 
 # set trusted domains
 urls=($NEXTCLOUD_URLS)
