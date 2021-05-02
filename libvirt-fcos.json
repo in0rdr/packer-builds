@@ -1,0 +1,44 @@
+{
+    "variables": {
+      "manifest": "manifest.json",
+      "buildname": "fcos-master",
+      "ignition_file": "master.ign",
+      "ignition_hash": "sha256-",
+      "coreos_install_device": "/dev/vda"
+    },
+    "builders":
+    [
+      {
+        "type": "qemu",
+        "iso_url": "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/33.20210217.3.0/x86_64/fedora-coreos-33.20210217.3.0-live.x86_64.iso",
+        "iso_checksum": "sha256:bf91335e07a97593b66e2ae9fd43924c3aa2353a5443e37b6efd77d3df883254",
+        "output_directory": "{{user `buildname`}}",
+        "disk_size": "14000",
+        "memory": "1024",
+        "format": "qcow2",
+        "accelerator": "kvm",
+        "http_directory": "config/fcos-ignition",
+        "communicator": "none",
+        "vm_name": "{{user `buildname`}}.qcow2",
+        "net_device": "virtio-net",
+        "disk_interface": "virtio",
+        "boot_wait": "10s",
+        "boot_command": [
+          "<wait30s>",
+          "sudo /usr/bin/coreos-installer install --ignition-url http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `ignition_file`}} --ignition-hash {{user `ignition_hash`}} {{user `coreos_install_device`}}",
+          "<enter>",
+          "<wait90s>",
+          "sudo -S shutdown -P now",
+          "<enter>"
+        ]
+      }
+    ],
+    "post-processors": [
+      {
+        "type": "manifest",
+        "output": "{{user `manifest`}}",
+        "strip_path": true
+      }
+    ]
+  }
+  
