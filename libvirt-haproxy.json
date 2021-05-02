@@ -1,0 +1,54 @@
+{
+  "variables": {
+    "manifest": "manifest.json",
+    "buildname": "haproxy"
+  },
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.9.0-amd64-netinst.iso",
+      "iso_checksum": "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS",
+      "output_directory": "{{user `buildname`}}",
+      "shutdown_command": "echo 'debian' | sudo -S shutdown -P now",
+      "disk_size": "14000",
+      "memory": "1024",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "http_directory": "config",
+      "ssh_username": "debian",
+      "ssh_password": "debian",
+      "ssh_timeout": "15m",
+      "vm_name": "{{user `buildname`}}.qcow2",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
+        "debian-installer=en_US.UTF-8 <wait>",
+        "auto <wait>",
+        "locale=en_US.UTF-8 <wait>",
+        "kbd-chooser/method=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "netcfg/get_hostname={{ .Name }} <wait>",
+        "netcfg/get_domain=libvirt <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "grub-installer/bootdev=/dev/sda <wait>",
+        "<enter><wait>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/haproxy-okd.sh",
+      "environment_vars": [
+      ]
+    }
+  ]
+}
